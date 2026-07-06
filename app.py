@@ -7,9 +7,11 @@ from flask import (
     url_for,
     jsonify
 )
-
-import sqlite3
 import os
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+import database
 
 from flask import send_from_directory
 UPLOAD_FOLDER = "uploads"
@@ -28,14 +30,17 @@ def uploaded_file(filename):
 # ============================
 # DATABASE CONNECTION
 # ============================
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+
 def get_db():
 
-    conn = sqlite3.connect("database.db")
-    conn.row_factory = sqlite3.Row
+    conn = psycopg2.connect(
+        DATABASE_URL,
+        cursor_factory=RealDictCursor
+    )
 
     return conn
-
-
 # ============================
 # HOME
 # ============================
@@ -61,8 +66,8 @@ def login():
         cur.execute("""
             SELECT *
             FROM employees
-            WHERE employee_id=?
-            AND passcode=?
+            WHERE employee_id=%s
+            AND passcode=%s
         """, (employee_id, passcode))
 
         employee = cur.fetchone()
@@ -99,7 +104,7 @@ def dashboard():
     cur.execute("""
         SELECT *
         FROM dtr
-        WHERE employee_id=?
+        WHERE employee_id=%s
         ORDER BY month DESC
     """, (session["employee"],))
 
@@ -130,13 +135,21 @@ def check_db():
     conn = get_db()
     cur = conn.cursor()
 
-    cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    cur.execute("""
+
+    SELECT table_name
+
+    FROM information_schema.tables
+
+    WHERE table_schema='public'
+
+    """)
 
     tables = cur.fetchall()
 
     conn.close()
 
-    return jsonify([dict(x) for x in tables])
+    return jsonify(tables)
 
 # ============================
 # API - AUTO UPLOAD PNG
@@ -165,7 +178,7 @@ def upload_png():
         cur.execute("""
             SELECT id
             FROM employees
-            WHERE employee_id=?
+            WHERE employee_id=%s
         """, (employee_id,))
 
         emp = cur.fetchone()
@@ -178,7 +191,7 @@ def upload_png():
                     name,
                     passcode
                 )
-                VALUES(?,?,?)
+                VALUES(%s,%s,%s)
             """, (
                 employee_id,
                 employee_name,
@@ -189,8 +202,8 @@ def upload_png():
 
             cur.execute("""
                 UPDATE employees
-                SET name=?
-                WHERE employee_id=?
+                SET name=%s
+                WHERE employee_id=%s
             """, (
                 employee_name,
                 employee_id
@@ -199,8 +212,8 @@ def upload_png():
         cur.execute("""
             SELECT id
             FROM dtr
-            WHERE employee_id=?
-            AND month=?
+            WHERE employee_id=%s
+            AND month=%s
         """, (employee_id, month))
 
         existing = cur.fetchone()
@@ -209,9 +222,9 @@ def upload_png():
 
             cur.execute("""
                 UPDATE dtr
-                SET image=?
-                WHERE employee_id=?
-                AND month=?
+                SET image=%s
+                WHERE employee_id=%s
+                AND month=%s
             """, (
                 filepath,
                 employee_id,
@@ -226,7 +239,7 @@ def upload_png():
                     month,
                     image
                 )
-                VALUES(?,?,?)
+                VALUES(%s,%s,%s)
             """, (
                 employee_id,
                 month,

@@ -1,39 +1,34 @@
-import sqlite3
+import os
+import psycopg2
 
-conn = sqlite3.connect("database.db")
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
-cursor = conn.cursor()
+conn = psycopg2.connect(DATABASE_URL)
 
-# ==========================
-# EMPLOYEES TABLE
-# ==========================
+cur = conn.cursor()
 
-cursor.execute("""
+cur.execute("""
 CREATE TABLE IF NOT EXISTS employees(
 
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
 
-    employee_id TEXT UNIQUE,
+    employee_id VARCHAR(100) UNIQUE,
 
-    name TEXT,
+    name VARCHAR(200),
 
-    passcode TEXT
+    passcode VARCHAR(100)
 
 )
 """)
 
-# ==========================
-# DTR TABLE
-# ==========================
-
-cursor.execute("""
+cur.execute("""
 CREATE TABLE IF NOT EXISTS dtr(
 
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
 
-    employee_id TEXT,
+    employee_id VARCHAR(100),
 
-    month TEXT,
+    month VARCHAR(20),
 
     image TEXT
 
@@ -41,7 +36,6 @@ CREATE TABLE IF NOT EXISTS dtr(
 """)
 
 conn.commit()
-
 conn.close()
 
-print("Database Created Successfully.")
+print("PostgreSQL Database Ready")

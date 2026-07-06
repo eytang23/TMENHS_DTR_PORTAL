@@ -130,14 +130,15 @@ def logout():
 @app.route("/api/upload", methods=["POST"])
 def upload_png():
 
-    employee_id = request.form["employee_id"]
-    month = request.form["month"]
+    employee_id = request.form["employee_id"].strip()
+    employee_name = request.form["employee_name"].strip()
+    month = request.form["month"].strip()
 
     image = request.files["image"]
 
     filename = image.filename
 
-# Physical file location
+    # Physical file location
     save_path = os.path.join(
         UPLOAD_FOLDER,
         filename
@@ -145,13 +146,52 @@ def upload_png():
 
     image.save(save_path)
 
-# Ito ang ise-save sa database
+    # Ito ang ise-save sa database
     filepath = f"uploads/{filename}"
 
     conn = get_db()
     cur = conn.cursor()
 
-    # Check kung may existing record na
+    # ==========================
+    # AUTO CREATE / UPDATE EMPLOYEE
+    # ==========================
+    cur.execute("""
+        SELECT id
+        FROM employees
+        WHERE employee_id=?
+    """, (employee_id,))
+
+    emp = cur.fetchone()
+
+    if emp is None:
+
+        cur.execute("""
+            INSERT INTO employees(
+                employee_id,
+                name,
+                passcode
+            )
+            VALUES(?,?,?)
+        """, (
+            employee_id,
+            employee_name,
+            employee_id
+        ))
+
+    else:
+
+        cur.execute("""
+            UPDATE employees
+            SET name=?
+            WHERE employee_id=?
+        """, (
+            employee_name,
+            employee_id
+        ))
+
+    # ==========================
+    # CHECK DTR RECORD
+    # ==========================
     cur.execute("""
         SELECT id
         FROM dtr
@@ -194,6 +234,9 @@ def upload_png():
 
     return jsonify({
         "status": "success",
+        "employee": employee_name,
+        "employee_id": employee_id,
+        "month": month,
         "file": filename
     })
 

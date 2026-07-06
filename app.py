@@ -123,6 +123,20 @@ def logout():
     session.clear()
 
     return redirect(url_for("home"))
+# ============================
+@app.route("/check_db")
+def check_db():
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
+
+    tables = cur.fetchall()
+
+    conn.close()
+
+    return jsonify([dict(x) for x in tables])
 
 # ============================
 # API - AUTO UPLOAD PNG

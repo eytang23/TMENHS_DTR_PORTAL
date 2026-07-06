@@ -130,115 +130,110 @@ def logout():
 @app.route("/api/upload", methods=["POST"])
 def upload_png():
 
-    employee_id = request.form["employee_id"].strip()
-    employee_name = request.form["employee_name"].strip()
-    month = request.form["month"].strip()
+    try:
 
-    image = request.files["image"]
+        employee_id = request.form["employee_id"].strip()
+        employee_name = request.form["employee_name"].strip()
+        month = request.form["month"].strip()
 
-    filename = image.filename
+        image = request.files["image"]
 
-    # Physical file location
-    save_path = os.path.join(
-        UPLOAD_FOLDER,
-        filename
-    )
+        filename = image.filename
 
-    image.save(save_path)
+        save_path = os.path.join(UPLOAD_FOLDER, filename)
+        image.save(save_path)
 
-    # Ito ang ise-save sa database
-    filepath = f"uploads/{filename}"
+        filepath = f"uploads/{filename}"
 
-    conn = get_db()
-    cur = conn.cursor()
-
-    # ==========================
-    # AUTO CREATE / UPDATE EMPLOYEE
-    # ==========================
-    cur.execute("""
-        SELECT id
-        FROM employees
-        WHERE employee_id=?
-    """, (employee_id,))
-
-    emp = cur.fetchone()
-
-    if emp is None:
+        conn = get_db()
+        cur = conn.cursor()
 
         cur.execute("""
-            INSERT INTO employees(
-                employee_id,
-                name,
-                passcode
-            )
-            VALUES(?,?,?)
-        """, (
-            employee_id,
-            employee_name,
-            employee_id
-        ))
-
-    else:
-
-        cur.execute("""
-            UPDATE employees
-            SET name=?
+            SELECT id
+            FROM employees
             WHERE employee_id=?
-        """, (
-            employee_name,
-            employee_id
-        ))
+        """, (employee_id,))
 
-    # ==========================
-    # CHECK DTR RECORD
-    # ==========================
-    cur.execute("""
-        SELECT id
-        FROM dtr
-        WHERE employee_id=?
-        AND month=?
-    """, (employee_id, month))
+        emp = cur.fetchone()
 
-    existing = cur.fetchone()
+        if emp is None:
 
-    if existing:
+            cur.execute("""
+                INSERT INTO employees(
+                    employee_id,
+                    name,
+                    passcode
+                )
+                VALUES(?,?,?)
+            """, (
+                employee_id,
+                employee_name,
+                employee_id
+            ))
+
+        else:
+
+            cur.execute("""
+                UPDATE employees
+                SET name=?
+                WHERE employee_id=?
+            """, (
+                employee_name,
+                employee_id
+            ))
 
         cur.execute("""
-            UPDATE dtr
-            SET image=?
+            SELECT id
+            FROM dtr
             WHERE employee_id=?
             AND month=?
-        """, (
-            filepath,
-            employee_id,
-            month
-        ))
+        """, (employee_id, month))
 
-    else:
+        existing = cur.fetchone()
 
-        cur.execute("""
-            INSERT INTO dtr(
+        if existing:
+
+            cur.execute("""
+                UPDATE dtr
+                SET image=?
+                WHERE employee_id=?
+                AND month=?
+            """, (
+                filepath,
+                employee_id,
+                month
+            ))
+
+        else:
+
+            cur.execute("""
+                INSERT INTO dtr(
+                    employee_id,
+                    month,
+                    image
+                )
+                VALUES(?,?,?)
+            """, (
                 employee_id,
                 month,
-                image
-            )
-            VALUES(?,?,?)
-        """, (
-            employee_id,
-            month,
-            filepath
-        ))
+                filepath
+            ))
 
-    conn.commit()
-    conn.close()
+        conn.commit()
+        conn.close()
 
-    return jsonify({
-        "status": "success",
-        "employee": employee_name,
-        "employee_id": employee_id,
-        "month": month,
-        "file": filename
-    })
+        return jsonify({"status":"success"})
+
+    except Exception as e:
+
+        import traceback
+
+        traceback.print_exc()
+
+        return jsonify({
+            "status":"error",
+            "message":str(e)
+        }),500
 
 # ============================
 # RUN SERVER

@@ -1,0 +1,15 @@
+venv/
+__pycache__/
+*.pyc
+database.db
+uploads/
+instance/
+.env
+.vscode/
+
+# Excel files
+*.xlsx
+*.xls
+
+# Temporary Office files
+~$*

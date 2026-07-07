@@ -11,6 +11,9 @@ import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
+import cloudinary
+import cloudinary.uploader
+
 import database
 
 from flask import send_from_directory
@@ -26,6 +29,12 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 @app.route("/uploads/<path:filename>")
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
+
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET")
+)
 
 # ============================
 # DATABASE CONNECTION
@@ -165,12 +174,12 @@ def upload_png():
 
         image = request.files["image"]
 
-        filename = image.filename
+        upload_result = cloudinary.uploader.upload(
+            image,
+            folder="TMENHS_DTR"
+        )
 
-        save_path = os.path.join(UPLOAD_FOLDER, filename)
-        image.save(save_path)
-
-        filepath = f"uploads/{filename}"
+        filepath = upload_result["secure_url"]
 
         conn = get_db()
         cur = conn.cursor()

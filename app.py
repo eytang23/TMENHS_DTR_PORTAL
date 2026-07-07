@@ -172,14 +172,7 @@ def upload_png():
         employee_name = request.form["employee_name"].strip()
         month = request.form["month"].strip()
 
-        image = request.files["image"]
-
-        upload_result = cloudinary.uploader.upload(
-            image,
-            folder="TMENHS_DTR"
-        )
-
-        filepath = upload_result["secure_url"]
+        filepath = request.form["image_url"].strip()
 
         conn = get_db()
         cur = conn.cursor()

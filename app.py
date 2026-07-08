@@ -14,6 +14,10 @@ from psycopg2.extras import RealDictCursor
 import cloudinary
 import cloudinary.uploader
 
+from flask import send_file
+import requests
+from io import BytesIO
+
 import database
 
 from flask import send_from_directory
@@ -263,6 +267,33 @@ def upload_png():
             "status":"error",
             "message":str(e)
         }),500
+    
+@app.route("/download/<int:dtr_id>")
+def download_dtr(dtr_id):
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT image
+        FROM dtr
+        WHERE id=%s
+    """, (dtr_id,))
+
+    dtr = cur.fetchone()
+    conn.close()
+
+    if not dtr:
+        return "File not found", 404
+
+    response = requests.get(dtr["image"])
+
+    return send_file(
+        BytesIO(response.content),
+        as_attachment=True,
+        download_name="DTR.png",
+        mimetype="image/png"
+    )
 
 # ============================
 # RUN SERVER

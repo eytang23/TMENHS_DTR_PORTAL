@@ -26,6 +26,45 @@ UPLOAD_FOLDER = "uploads"
 app = Flask(__name__)
 app.secret_key = "TMENHS_SECRET_2026"
 
+# ============================
+# LIVE UPLOAD STATUS
+# ============================
+upload_status = {
+    "running": False,
+    "current_employee": "",
+    "completed": 0,
+    "total": 0,
+    "progress": 0,
+    "finished": False
+}
+
+# ============================
+# API - LIVE UPLOAD STATUS
+# ============================
+@app.route("/api/upload-status")
+def get_upload_status():
+
+    return jsonify(upload_status)
+
+# ============================
+# API - UPDATE LIVE STATUS
+# ============================
+@app.route("/api/update-upload-status", methods=["POST"])
+def update_upload_status():
+
+    data = request.get_json()
+
+    upload_status["running"] = data.get("running", False)
+    upload_status["current_employee"] = data.get("current_employee", "")
+    upload_status["completed"] = data.get("completed", 0)
+    upload_status["total"] = data.get("total", 0)
+    upload_status["progress"] = data.get("progress", 0)
+    upload_status["finished"] = data.get("finished", False)
+
+    return jsonify({
+        "status": "success"
+    })
+
 UPLOAD_FOLDER = "uploads"
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)

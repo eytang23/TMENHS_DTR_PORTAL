@@ -53,6 +53,41 @@ LOGIN
 
 </button>
 
+<hr>
+
+<div id="uploadStatus" class="mt-3">
+
+    <h6>DTR Upload Status</h6>
+
+    <div class="progress">
+
+        <div
+            id="progressBar"
+            class="progress-bar progress-bar-striped progress-bar-animated"
+            style="width:0%">
+            0%
+        </div>
+
+    </div>
+
+    <small
+        id="employeeName"
+        class="d-block mt-2">
+
+        Waiting for upload...
+
+    </small>
+
+    <small
+        id="completed"
+        class="d-block">
+
+        0 / 0
+
+    </small>
+
+</div>
+
 </form>
 
 </div>
@@ -62,6 +97,60 @@ LOGIN
 </div>
 
 </div>
+<script>
+
+async function loadUploadStatus() {
+
+    try {
+
+        const response = await fetch("/api/upload-status");
+
+        const data = await response.json();
+
+        const progress = data.progress || 0;
+
+        document.getElementById("progressBar").style.width = progress + "%";
+        document.getElementById("progressBar").innerHTML = progress + "%";
+
+        if (data.finished) {
+
+            document.getElementById("employeeName").innerHTML =
+                "✔ Upload Complete";
+
+            document.getElementById("completed").innerHTML =
+                "Ready for Download";
+
+        } else if (data.running) {
+
+            document.getElementById("employeeName").innerHTML =
+                "Uploading: " + data.current_employee;
+
+            document.getElementById("completed").innerHTML =
+                "Completed: " + data.completed + " / " + data.total;
+
+        } else {
+
+            document.getElementById("employeeName").innerHTML =
+                "Waiting for upload...";
+
+            document.getElementById("completed").innerHTML =
+                "0 / 0";
+
+        }
+
+    } catch (err) {
+
+        console.log(err);
+
+    }
+
+}
+
+loadUploadStatus();
+
+setInterval(loadUploadStatus, 1000);
+
+</script>
 
 </body>
 

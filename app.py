@@ -19,6 +19,9 @@ import requests
 from io import BytesIO
 
 import database
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from flask import send_from_directory
 UPLOAD_FOLDER = "uploads"
@@ -357,6 +360,31 @@ def admin_dashboard():
         total_months=total_months,
         total_dtr=total_dtr
     )
+
+# ============================
+# ADMIN LOGIN
+# ============================
+@app.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+
+    if request.method == "POST":
+
+        username = request.form["username"].strip()
+        password = request.form["password"].strip()
+
+        # Temporary hardcoded admin account
+        if username == "admin" and password == "TMENHS2026":
+
+            session["admin"] = username
+
+            return redirect(url_for("admin_dashboard"))
+
+        return render_template(
+            "admin/login.html",
+            error="Invalid username or password."
+        )
+
+    return render_template("admin/login.html")
 
 # ============================
 # RUN SERVER

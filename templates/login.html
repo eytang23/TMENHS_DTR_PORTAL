@@ -59,32 +59,51 @@ LOGIN
 
     <h6>DTR Upload Status</h6>
 
-    <div class="progress">
+    <div id="progressContainer">
 
-        <div
-            id="progressBar"
-            class="progress-bar progress-bar-striped progress-bar-animated"
-            style="width:0%">
-            0%
+        <div class="progress">
+
+            <div
+                id="progressBar"
+                class="progress-bar progress-bar-striped progress-bar-animated"
+                style="width:0%">
+
+                0%
+
+            </div>
+
         </div>
+
+        <small
+            id="employeeName"
+            class="d-block mt-2">
+
+            Waiting for upload...
+
+        </small>
+
+        <small
+            id="completed"
+            class="d-block">
+
+            0 / 0
+
+        </small>
 
     </div>
 
-    <small
-        id="employeeName"
-        class="d-block mt-2">
+    <div
+        id="successMessage"
+        class="alert alert-success mt-3 text-center"
+        style="display:none;">
 
-        Waiting for upload...
+        <h5 class="mb-2">
+            ✔ Successfully Uploaded
+        </h5>
 
-    </small>
+        <div id="successDetails"></div>
 
-    <small
-        id="completed"
-        class="d-block">
-
-        0 / 0
-
-    </small>
+    </div>
 
 </div>
 
@@ -114,11 +133,22 @@ async function loadUploadStatus() {
 
         if (data.finished) {
 
-            document.getElementById("employeeName").innerHTML =
-                "✔ Upload Complete";
+            document.getElementById("progressContainer").style.display = "none";
 
-            document.getElementById("completed").innerHTML =
-                "Ready for Download";
+            document.getElementById("successMessage").style.display = "block";
+
+            const now = new Date();
+
+            const monthYear = now.toLocaleString('default', {
+                month: 'long',
+                year: 'numeric'
+            });
+
+            document.getElementById("successDetails").innerHTML = `
+                <strong>${monthYear} DTR</strong><br>
+                Upload completed successfully.<br>
+                Employees Processed: ${data.total}
+    `        ;
 
         } else if (data.running) {
 

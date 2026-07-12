@@ -334,6 +334,30 @@ def download_dtr(dtr_id):
         mimetype="image/png"
     )
 
+@app.route("/admin/dashboard")
+def admin_dashboard():
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("SELECT COUNT(*) FROM employees")
+    total_employees = cur.fetchone()["count"]
+
+    cur.execute("SELECT COUNT(DISTINCT month) FROM dtr")
+    total_months = cur.fetchone()["count"]
+
+    cur.execute("SELECT COUNT(*) FROM dtr")
+    total_dtr = cur.fetchone()["count"]
+
+    conn.close()
+
+    return render_template(
+        "admin/dashboard.html",
+        total_employees=total_employees,
+        total_months=total_months,
+        total_dtr=total_dtr
+    )
+
 # ============================
 # RUN SERVER
 # ============================

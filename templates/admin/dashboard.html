@@ -1,0 +1,63 @@
+{% extends "admin/layout.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">
+
+Admin Dashboard
+
+</h2>
+
+<div class="row">
+
+<div class="col-md-3">
+
+<div class="card shadow">
+
+<div class="card-body text-center">
+
+<h1>{{ total_employees }}</h1>
+
+Employees
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card shadow">
+
+<div class="card-body text-center">
+
+<h1>{{ total_months }}</h1>
+
+Uploaded Months
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card shadow">
+
+<div class="card-body text-center">
+
+<h1>{{ total_dtr }}</h1>
+
+DTR Records
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

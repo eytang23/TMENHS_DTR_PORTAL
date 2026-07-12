@@ -63,6 +63,7 @@ def update_upload_status():
     upload_status["total"] = data.get("total", 0)
     upload_status["progress"] = data.get("progress", 0)
     upload_status["finished"] = data.get("finished", False)
+    upload_status["month"] = data.get("month", "")
 
     return jsonify({
         "status": "success"

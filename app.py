@@ -419,6 +419,34 @@ def admin_login():
     return render_template("admin/login.html")
 
 # ============================
+# MANAGE MONTH
+# ============================
+@app.route("/admin/manage/<month>")
+def manage_month(month):
+
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT COUNT(*) AS total_records
+        FROM dtr
+        WHERE month=%s
+    """, (month,))
+
+    result = cur.fetchone()
+
+    conn.close()
+
+    return render_template(
+        "admin/manage_month.html",
+        month=month,
+        total_records=result["total_records"]
+    )
+
+# ============================
 # RUN SERVER
 # ============================
 if __name__ == "__main__":

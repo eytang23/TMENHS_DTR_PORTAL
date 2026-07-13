@@ -1,0 +1,49 @@
+{% extends "admin/layout.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    📁 Manage DTR Month
+</h2>
+
+<div class="card shadow">
+
+    <div class="card-body">
+
+        <h4>
+
+            {{ month }}
+
+        </h4>
+
+        <hr>
+
+        <p>
+
+            <strong>Total Employee Records:</strong>
+
+            {{ total_records }}
+
+        </p>
+
+        <a
+            href="/admin/delete-month/{{ month }}"
+            class="btn btn-danger">
+
+            🗑 Delete Month
+
+        </a>
+
+        <a
+            href="{{ url_for('dtr_management') }}"
+            class="btn btn-secondary">
+
+            Back
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

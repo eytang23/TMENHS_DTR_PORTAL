@@ -1,0 +1,69 @@
+{% extends "admin/dashboard.html" %}
+
+{% block content %}
+
+<h3 class="mb-4">
+    📁 DTR Management
+</h3>
+
+<div class="card shadow">
+
+    <div class="card-header">
+
+        Available Uploaded Months
+
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-hover">
+
+            <thead>
+
+                <tr>
+
+                    <th>Month</th>
+
+                    <th>Total Records</th>
+
+                    <th width="180">Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for row in months %}
+
+                <tr>
+
+                    <td>{{ row.month }}</td>
+
+                    <td>{{ row.total_records }}</td>
+
+                    <td>
+
+                        <a
+                            href="/admin/manage/{{ row.month }}"
+                            class="btn btn-primary btn-sm">
+
+                            Manage
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

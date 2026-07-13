@@ -363,6 +363,37 @@ def admin_dashboard():
     )
 
 # ============================
+# DTR MANAGEMENT
+# ============================
+@app.route("/admin/dtr-management")
+def dtr_management():
+
+    # Optional: protect admin pages
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT
+            month,
+            COUNT(*) AS total_records
+        FROM dtr
+        GROUP BY month
+        ORDER BY month DESC
+    """)
+
+    months = cur.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "admin/dtr_management.html",
+        months=months
+    )
+
+# ============================
 # ADMIN LOGIN
 # ============================
 @app.route("/admin/login", methods=["GET", "POST"])

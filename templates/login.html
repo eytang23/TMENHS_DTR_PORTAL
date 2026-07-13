@@ -159,18 +159,11 @@ async function loadUploadStatus() {
 
             const monthYear = data.month;
 
-            const monthYear = now.toLocaleString("default", {
-                month: "long",
-                year: "numeric"
-            });
-
             statusCard.className = "alert alert-success";
 
             lastUpload.innerHTML = `
                 <h6 class="mb-2">✅ Successfully Uploaded</h6>
-
                 <strong>${monthYear} DTR</strong><br>
-
                 ${data.total} Employee Records Uploaded
             `;
 

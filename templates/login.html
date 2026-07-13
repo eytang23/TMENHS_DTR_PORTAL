@@ -126,53 +126,64 @@ async function loadUploadStatus() {
         const progressSection = document.getElementById("progressSection");
         const lastUpload = document.getElementById("lastUpload");
 
-        // ==========================
-        // Upload is Running
-        // ==========================
-        if (data.running) {
+        const progressBar = document.getElementById("progressBar");
+        const employeeName = document.getElementById("employeeName");
+        const completed = document.getElementById("completed");
+
+        // ===============================
+        // UPLOAD CURRENTLY RUNNING
+        // ===============================
+        if (data.running === true) {
 
             statusCard.style.display = "none";
             progressSection.style.display = "block";
 
-            document.getElementById("progressBar").style.width =
-                data.progress + "%";
+            progressBar.style.width = data.progress + "%";
+            progressBar.innerHTML = data.progress + "%";
 
-            document.getElementById("progressBar").innerHTML =
-                data.progress + "%";
+            employeeName.innerHTML =
+                "<strong>Uploading:</strong> " + data.current_employee;
 
-            document.getElementById("employeeName").innerHTML =
-                "Uploading: <strong>" + data.current_employee + "</strong>";
-
-            document.getElementById("completed").innerHTML =
+            completed.innerHTML =
                 "Completed: " + data.completed + " / " + data.total;
 
             return;
         }
 
-        // ==========================
-        // Upload Finished
-        // ==========================
+        // ===============================
+        // NO LONGER RUNNING
+        // ===============================
         progressSection.style.display = "none";
         statusCard.style.display = "block";
 
-        if (data.finished) {
-
-            const monthYear = data.month;
+        // ===============================
+        // FINISHED
+        // ===============================
+        if (data.finished === true) {
 
             statusCard.className = "alert alert-success";
 
             lastUpload.innerHTML = `
-                <h6 class="mb-2">✅ Successfully Uploaded</h6>
-                <strong>${monthYear} DTR</strong><br>
+                <h6>✅ Successfully Uploaded</h6>
+
+                <hr>
+
+                <strong>${data.month}</strong><br>
+
                 ${data.total} Employee Records Uploaded
             `;
 
-        } else {
+        }
+
+        // ===============================
+        // SYSTEM READY
+        // ===============================
+        else {
 
             statusCard.className = "alert alert-info";
 
             lastUpload.innerHTML = `
-                <h6 class="mb-2">🟢 System Ready</h6>
+                <h6>🟢 System Ready</h6>
 
                 Waiting for next DTR upload...
             `;
@@ -181,9 +192,9 @@ async function loadUploadStatus() {
 
     }
 
-    catch(err){
+    catch(error){
 
-        console.log(err);
+        console.log(error);
 
     }
 

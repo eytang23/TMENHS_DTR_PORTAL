@@ -20,6 +20,7 @@ from io import BytesIO
 
 import database
 from dotenv import load_dotenv
+from flask import flash
 
 load_dotenv()
 
@@ -445,6 +446,24 @@ def manage_month(month):
         month=month,
         total_records=result["total_records"]
     )
+
+@app.route("/admin/delete-month/<month>", methods=["POST"])
+def delete_month(month):
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("""
+        DELETE FROM dtr
+        WHERE month=%s
+    """, (month,))
+
+    conn.commit()
+    conn.close()
+
+    flash(f"{month} deleted successfully.", "success")
+
+    return redirect(url_for("dtr_management"))
 
 # ============================
 # RUN SERVER

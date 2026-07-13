@@ -26,13 +26,21 @@
 
         </p>
 
-        <a
-            href="/admin/delete-month/{{ month }}"
-            class="btn btn-danger">
+        <form
+            action="{{ url_for('delete_month', month=month) }}"
+            method="POST"
+            onsubmit="return confirmDelete();"
+            style="display:inline;">
 
-            🗑 Delete Month
+            <button
+                type="submit"
+                class="btn btn-danger">
 
-        </a>
+                🗑 Delete Month
+
+            </button>
+
+        </form>
 
         <a
             href="{{ url_for('dtr_management') }}"
@@ -47,3 +55,18 @@
 </div>
 
 {% endblock %}
+<script>
+
+function confirmDelete() {
+
+    return confirm(
+        "⚠ WARNING\n\n" +
+        "You are about to permanently delete\n\n" +
+        "{{ month }}\n\n" +
+        "This action cannot be undone.\n\n" +
+        "Do you want to continue?"
+    );
+
+}
+
+</script>

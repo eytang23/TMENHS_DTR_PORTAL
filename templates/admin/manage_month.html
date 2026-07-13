@@ -26,21 +26,14 @@
 
         </p>
 
-        <form
-            action="{{ url_for('delete_month', month=month) }}"
-            method="POST"
-            onsubmit="return confirmDelete();"
-            style="display:inline;">
+        <button
+            class="btn btn-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#deleteModal">
 
-            <button
-                type="submit"
-                class="btn btn-danger">
+            🗑 Delete Month
 
-                🗑 Delete Month
-
-            </button>
-
-        </form>
+        </button>
 
         <a
             href="{{ url_for('dtr_management') }}"
@@ -55,18 +48,83 @@
 </div>
 
 {% endblock %}
-<script>
+<!-- Delete Confirmation Modal -->
 
-function confirmDelete() {
+<div
+    class="modal fade"
+    id="deleteModal"
+    tabindex="-1">
 
-    return confirm(
-        "⚠ WARNING\n\n" +
-        "You are about to permanently delete\n\n" +
-        "{{ month }}\n\n" +
-        "This action cannot be undone.\n\n" +
-        "Do you want to continue?"
-    );
+    <div class="modal-dialog">
 
-}
+        <div class="modal-content">
 
-</script>
+            <div class="modal-header bg-danger text-white">
+
+                <h5 class="modal-title">
+
+                    Delete DTR Month
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal">
+
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <p>
+
+                    You are about to permanently delete:
+
+                </p>
+
+                <h4 class="text-danger">
+
+                    {{ month }}
+
+                </h4>
+
+                <p>
+
+                    This action cannot be undone.
+
+                </p>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+                <form
+                    action="{{ url_for('delete_month', month=month) }}"
+                    method="POST">
+
+                    <button
+                        class="btn btn-danger">
+
+                        Delete
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

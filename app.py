@@ -504,36 +504,39 @@ def reset_password(employee_id):
     confirm_password = request.form["confirm_password"]
 
     if new_password != confirm_password:
-
-        flash(
-            "Passwords do not match.",
-            "danger"
-        )
-
+        flash("Passwords do not match.", "danger")
         return redirect(url_for("employee_accounts"))
 
     conn = get_db()
     cur = conn.cursor()
 
-    cur.execute(
-        """
+    print("Employee ID received:", employee_id)
+    print("New Password:", new_password)
+
+    cur.execute("""
         UPDATE employees
         SET passcode=%s
         WHERE employee_id=%s
-        """,
-        (
-            new_password,
-            employee_id
-        )
-    )
+    """, (new_password, employee_id))
+
+    print("Rows updated:", cur.rowcount)
 
     conn.commit()
+
+    # Basahin ulit ang record pagkatapos ng update
+    cur.execute("""
+        SELECT employee_id, passcode
+        FROM employees
+        WHERE employee_id=%s
+    """, (employee_id,))
+
+    employee = cur.fetchone()
+
+    print("Database Record:", employee)
+
     conn.close()
 
-    flash(
-        "Password has been reset successfully.",
-        "success"
-    )
+    flash("Password has been reset successfully.", "success")
 
     return redirect(url_for("employee_accounts"))
 # ============================

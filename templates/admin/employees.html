@@ -127,7 +127,11 @@
                         </button>
 
                         <button
-                            class="btn btn-warning btn-sm">
+                            class="btn btn-warning btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#resetPasswordModal"
+                            data-id="{{ emp.employee_id }}"
+                            data-name="{{ emp.name }}">
 
                             🔑 Reset Password
 
@@ -148,3 +152,147 @@
 </div>
 
 {% endblock %}
+<!-- ===========================
+Reset Password Modal
+=========================== -->
+
+<div
+    class="modal fade"
+    id="resetPasswordModal"
+    tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header bg-warning">
+
+                <h5 class="modal-title">
+
+                    🔑 Reset Employee Password
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <form
+                id="resetPasswordForm"
+                method="POST">
+
+                <div class="modal-body">
+
+                    <p>
+
+                        Employee:
+
+                    </p>
+
+                    <h5 id="employeeName"></h5>
+
+                    <input
+                        type="hidden"
+                        id="employeeId"
+                        name="employee_id">
+
+                    <hr>
+
+                    <label>
+
+                        New Password
+
+                    </label>
+
+                    <input
+                        type="password"
+                        class="form-control"
+                        name="new_password"
+                        required>
+
+                    <br>
+
+                    <label>
+
+                        Confirm Password
+
+                    </label>
+
+                    <input
+                        type="password"
+                        class="form-control"
+                        name="confirm_password"
+                        required>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                        type="button">
+
+                        Cancel
+
+                    </button>
+
+                    <button
+                        class="btn btn-warning"
+                        type="submit">
+
+                        🔑 Reset Password
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+const resetModal =
+document.getElementById("resetPasswordModal");
+
+resetModal.addEventListener(
+    "show.bs.modal",
+    function(event){
+
+        const button =
+        event.relatedTarget;
+
+        const employeeId =
+        button.getAttribute("data-id");
+
+        const employeeName =
+        button.getAttribute("data-name");
+
+        document.getElementById(
+            "employeeId"
+        ).value = employeeId;
+
+        document.getElementById(
+            "employeeName"
+        ).innerHTML =
+        employeeName;
+
+        document.getElementById(
+            "resetPasswordForm"
+        ).action =
+        "/admin/reset-password/" +
+        employeeId;
+
+    }
+
+);
+
+</script>

@@ -494,6 +494,48 @@ def employee_accounts():
         employees=employees
     )
 
+@app.route("/admin/reset-password/<employee_id>", methods=["POST"])
+def reset_password(employee_id):
+
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    new_password = request.form["new_password"]
+    confirm_password = request.form["confirm_password"]
+
+    if new_password != confirm_password:
+
+        flash(
+            "Passwords do not match.",
+            "danger"
+        )
+
+        return redirect(url_for("employee_accounts"))
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        UPDATE employees
+        SET passcode=%s
+        WHERE employee_id=%s
+        """,
+        (
+            new_password,
+            employee_id
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
+    flash(
+        "Password has been reset successfully.",
+        "success"
+    )
+
+    return redirect(url_for("employee_accounts"))
 # ============================
 # RUN SERVER
 # ============================

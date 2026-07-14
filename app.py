@@ -466,6 +466,35 @@ def delete_month(month):
     return redirect(url_for("dtr_management"))
 
 # ============================
+# EMPLOYEE ACCOUNTS
+# ============================
+@app.route("/admin/employees")
+def employee_accounts():
+
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT
+            employee_id,
+            name
+        FROM employees
+        ORDER BY name ASC
+    """)
+
+    employees = cur.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "admin/employees.html",
+        employees=employees
+    )
+
+# ============================
 # RUN SERVER
 # ============================
 if __name__ == "__main__":

@@ -1,0 +1,123 @@
+{% extends "admin/layout.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">
+
+    👤 Employee Details
+
+</h2>
+
+<div class="row">
+
+    <div class="col-md-4">
+
+        <div class="card shadow">
+
+            <div class="card-body">
+
+                <h5 class="text-primary">
+
+                    {{ employee.name }}
+
+                </h5>
+
+                <hr>
+
+                <p>
+
+                    <strong>Employee ID:</strong><br>
+
+                    {{ employee.employee_id }}
+
+                </p>
+
+                <p>
+
+                    <strong>Total Uploaded DTR:</strong>
+
+                    {{ months|length }}
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-8">
+
+        <div class="card shadow">
+
+            <div class="card-header bg-primary text-white">
+
+                Uploaded DTR Months
+
+            </div>
+
+            <div class="card-body">
+
+                {% if months %}
+
+                    <table class="table table-striped">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>#</th>
+
+                                <th>Month</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                        {% for month in months %}
+
+                            <tr>
+
+                                <td>{{ loop.index }}</td>
+
+                                <td>{{ month.month }}</td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                {% else %}
+
+                    <div class="alert alert-warning">
+
+                        No uploaded DTR found.
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<br>
+
+<a
+    href="{{ url_for('employee_accounts') }}"
+    class="btn btn-secondary">
+
+    ← Back to Employee Accounts
+
+</a>
+
+{% endblock %}

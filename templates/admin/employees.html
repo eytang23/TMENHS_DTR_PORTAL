@@ -46,7 +46,8 @@
                         type="text"
                         name="search"
                         class="form-control"
-                        placeholder="Search Employee ID or Name">
+                        placeholder="Search Employee ID or Name"
+                        value="{{ search }}">
 
                 </div>
 
@@ -109,7 +110,9 @@
 
             <tbody>
 
-            {% for emp in employees %}
+            {% if employees %}
+
+                {% for emp in employees %}
 
                 <tr>
 
@@ -119,15 +122,15 @@
 
                     <td>
 
-                        <button
+                        <a
+                            href="{{ url_for('view_employee', employee_id=emp.employee_id) }}"
                             class="btn btn-info btn-sm">
 
                             👁 View
 
-                        </button>
+                        </a>
 
                         <button
-                            type="button"
                             class="btn btn-warning btn-sm"
                             data-bs-toggle="modal"
                             data-bs-target="#resetPasswordModal"
@@ -142,7 +145,21 @@
 
                 </tr>
 
-            {% endfor %}
+                {% endfor %}
+
+            {% else %}
+
+            <tr>
+
+                <td colspan="3" class="text-center text-muted">
+
+                    No employee found.
+
+                </td>
+
+            </tr>
+
+            {% endif %}
 
             </tbody>
 

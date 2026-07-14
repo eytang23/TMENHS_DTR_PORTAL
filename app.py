@@ -474,16 +474,34 @@ def employee_accounts():
     if "admin" not in session:
         return redirect(url_for("admin_login"))
 
+    search = request.args.get("search", "").strip()
+
     conn = get_db()
     cur = conn.cursor()
 
-    cur.execute("""
-        SELECT
-            employee_id,
-            name
-        FROM employees
-        ORDER BY name ASC
-    """)
+    if search:
+
+        cur.execute("""
+            SELECT
+                employee_id,
+                name
+            FROM employees
+            WHERE
+                employee_id ILIKE %s
+                OR
+                name ILIKE %s
+            ORDER BY name ASC
+        """, (f"%{search}%", f"%{search}%"))
+
+    else:
+
+        cur.execute("""
+            SELECT
+                employee_id,
+                name
+            FROM employees
+            ORDER BY name ASC
+        """)
 
     employees = cur.fetchall()
 
@@ -491,7 +509,8 @@ def employee_accounts():
 
     return render_template(
         "admin/employees.html",
-        employees=employees
+        employees=employees,
+        search=search
     )
 
 @app.route("/admin/reset-password/<employee_id>", methods=["POST"])
@@ -539,6 +558,48 @@ def reset_password(employee_id):
     flash("Password has been reset successfully.", "success")
 
     return redirect(url_for("employee_accounts"))
+
+# ============================
+# VIEW EMPLOYEE DETAILS
+# ============================
+@app.route("/admin/employee/<employee_id>")
+def view_employee(employee_id):
+
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    # Employee Information
+    cur.execute("""
+        SELECT
+            employee_id,
+            name
+        FROM employees
+        WHERE employee_id=%s
+    """, (employee_id,))
+
+    employee = cur.fetchone()
+
+    # Employee DTR Months
+    cur.execute("""
+        SELECT
+            month
+        FROM dtr
+        WHERE employee_id=%s
+        ORDER BY month
+    """, (employee_id,))
+
+    months = cur.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "admin/employee_details.html",
+        employee=employee,
+        months=months
+    )
 # ============================
 # RUN SERVER
 # ============================

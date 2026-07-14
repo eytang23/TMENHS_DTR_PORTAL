@@ -129,7 +129,6 @@
                         <button
                             type="button"
                             class="btn btn-warning btn-sm"
-                            onclick="alert('Button works!')"
                             data-bs-toggle="modal"
                             data-bs-target="#resetPasswordModal"
                             data-id="{{ emp.employee_id }}"
@@ -152,8 +151,6 @@
     </div>
 
 </div>
-
-{% endblock %}
 <!-- ===========================
 Reset Password Modal
 =========================== -->
@@ -298,3 +295,6 @@ resetModal.addEventListener(
 );
 
 </script>
+
+{% endblock %}
+

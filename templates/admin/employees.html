@@ -1,0 +1,150 @@
+{% extends "admin/layout.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">
+
+    👥 Employee Accounts
+
+</h2>
+
+<!-- Summary Card -->
+
+<div class="row mb-4">
+
+    <div class="col-md-3">
+
+        <div class="card shadow">
+
+            <div class="card-body text-center">
+
+                <h2>{{ employees|length }}</h2>
+
+                <small>Total Employees</small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Search -->
+
+<div class="card shadow mb-4">
+
+    <div class="card-body">
+
+        <form method="GET">
+
+            <div class="row">
+
+                <div class="col-md-8">
+
+                    <input
+                        type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="Search Employee ID or Name">
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button
+                        class="btn btn-primary w-100">
+
+                        🔍 Search
+
+                    </button>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <a
+                        href="{{ url_for('employee_accounts') }}"
+                        class="btn btn-secondary w-100">
+
+                        Show All
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- Employee Table -->
+
+<div class="card shadow">
+
+    <div class="card-body">
+
+        <table class="table table-hover">
+
+            <thead class="table-primary">
+
+                <tr>
+
+                    <th>Employee ID</th>
+
+                    <th>Employee Name</th>
+
+                    <th width="220">
+
+                        Actions
+
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for emp in employees %}
+
+                <tr>
+
+                    <td>{{ emp.employee_id }}</td>
+
+                    <td>{{ emp.name }}</td>
+
+                    <td>
+
+                        <button
+                            class="btn btn-info btn-sm">
+
+                            👁 View
+
+                        </button>
+
+                        <button
+                            class="btn btn-warning btn-sm">
+
+                            🔑 Reset Password
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}
